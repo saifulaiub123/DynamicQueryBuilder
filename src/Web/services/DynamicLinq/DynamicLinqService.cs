@@ -25,8 +25,8 @@ namespace Involys.Poc.Api.services.DynamicLinq
         {
             try
             {
-                StringBuilder sb = new StringBuilder("select * from [" + model.TableName + "] ");
-
+                var selectedColumn = GetSelectedColumList(model);
+                StringBuilder sb = new StringBuilder($"select {selectedColumn} from [{model.TableName}] ");
                 if (model.JoinTables.Count > 0)
                 {
                     foreach (var jt in model.JoinTables)
@@ -72,6 +72,41 @@ namespace Involys.Poc.Api.services.DynamicLinq
             {
                 throw ex;
             }    
+        }
+
+        private string GetSelectedColumList(DynamicLinqModel model)
+        {
+            var columns = string.Empty;
+
+            if(model.Columns.Count > 0)
+            {
+                foreach(var col in model.Columns)
+                {
+                    columns += $"[{model.TableName}].[{col}],";
+                }
+            }
+
+            foreach(var joinTable in model.JoinTables)
+            {
+                if(joinTable.Columns.Count > 0)
+                {
+                    foreach (var col in joinTable.Columns)
+                    {
+                        columns += $"[{joinTable.TableName}].[{col}],";
+                    }
+                }
+            }
+
+            if(string.IsNullOrEmpty(columns))
+            {
+                columns = "*";
+            }
+            else
+            {
+                columns = columns.Remove(columns.Length - 1);
+            }
+
+            return columns;
         }
     }
 }

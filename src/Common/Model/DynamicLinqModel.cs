@@ -14,6 +14,7 @@ namespace Common.Model
     public class JoinTable
     {
         public string TableName { get; set; }
+        public List<string> Columns { get; set; }
         public string ParentTableName { get; set; }
         public string ParentColumnOn { get; set; }
         public string CurrentColumnOn { get; set; }
